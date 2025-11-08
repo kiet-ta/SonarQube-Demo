@@ -1,7 +1,8 @@
-// src/pages/RegisterPage.tsx
 import React, { JSX, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import RegisterPicture from "../assets/images/LoginPicture.jpg";
+import RegisterPicture from "../assets/images/LoginPicture.webp";
+import authApi from "../api/authApi";
+import axios from "axios";
 
 interface Errors {
   fullname?: string;
@@ -50,14 +51,23 @@ export default function RegisterPage(): JSX.Element {
     if (!validateFields()) return;
 
     setLoading(true);
+    setErrors({});
     try {
-      // Thay chỗ này bằng axios/fetch call thực tế tới API register khi bạn cần
-      await new Promise((r) => setTimeout(r, 1000));
-      // giả lập thành công
-      navigate("/login");
+      await authApi.register({
+        fullname: fullname.trim(),
+        email: email.trim(),
+        password: password,
+      });
+
+      navigate("/"); 
+      
     } catch (err) {
       console.error("Register error:", err);
-      setErrors({ general: "Đăng ký thất bại. Vui lòng thử lại." });
+      if (axios.isAxiosError(err) && err.response?.status === 409) {
+        setErrors({ email: "Email này đã tồn tại." });
+      } else {
+        setErrors({ general: "Đăng ký thất bại. Vui lòng thử lại." });
+      }
     } finally {
       setLoading(false);
     }

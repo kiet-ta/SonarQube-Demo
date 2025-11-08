@@ -4,6 +4,7 @@ import path from "path"
 import { Children } from "react"
 import MainLayout from "../layouts/MainLayout"
 import RegisterPage from "../pages/RegisterPage"
+import HomePage from "../pages/HomePage"
 
 export const router = createBrowserRouter([
   {
@@ -19,7 +20,7 @@ export const router = createBrowserRouter([
         element: <RegisterPage />,
       },
       {
-        path:"home",
+        path:"homepage",
         element:<HomePage/>
       }
     ],

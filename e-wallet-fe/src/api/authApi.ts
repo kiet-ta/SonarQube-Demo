@@ -1,73 +1,63 @@
+import axios, { AxiosError, AxiosInstance } from 'axios';
+
+// Interfaces (giữ nguyên, đã chuẩn)
 interface LoginRequest {
   email: string;
   password: string;
 }
 
 interface RegisterRequest {
-  name?: string;
   email: string;
-  password: string;
+  fullname: string;
+  password: string
 }
 
 interface ApiResponse<T = any> {
   data?: T;
   message?: string;
-  token?: string;
   [key: string]: any;
 }
 
+const apiInstance: AxiosInstance = axios.create({
+  baseURL: `${import.meta.env.VITE_API_BASE_URL}auth`,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+apiInstance.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    console.error(
+      `❌ API call failed: ${error.config?.url}`,
+      error.response?.status,
+      error.response?.data,
+    );
+    return Promise.reject(error);
+  },
+);
+
 class AuthApi {
-  private apiUrl: string;
-
-  constructor() {
-    this.apiUrl = `${import.meta.env.VITE_API_BASE_URL}auth`;
-  }
-
   async login({ email, password }: LoginRequest): Promise<ApiResponse> {
     try {
-      const response = await fetch(`${this.apiUrl}/tokens`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+      const response = await apiInstance.post<ApiResponse>('/tokens', {
+        email,
+        password,
       });
-
-      const text = await response.text();
-
-      if (!response.ok) {
-        console.error("❌ Login API failed:", response.status, text);
-        throw new Error("Login failed");
-      }
-
-      const json: ApiResponse = JSON.parse(text);
-      return json;
+      return response.data; 
     } catch (error) {
-      console.error("Error in login:", error);
-      throw error;
+      console.error('Error in login:', error);
+      throw new Error('Login failed'); 
     }
   }
 
   async register(userData: RegisterRequest): Promise<ApiResponse> {
     try {
-      const res = await fetch(`${this.apiUrl}/users`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
-      });
-
-      const text = await res.text();
-
-      if (!res.ok) {
-        console.error("❌ Register API failed:", res.status, text);
-        throw new Error("Register failed");
-      }
-
-      const json: ApiResponse = JSON.parse(text);
-      return json;
+      const response = await apiInstance.post<ApiResponse>('/users', userData);
+      return response.data;
     } catch (err) {
-      console.error("Error in register:", err);
-      throw err;
+      console.error('Error in register:', err);
+      throw new Error('Register failed');
     }
   }
 }

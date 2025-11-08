@@ -1,12 +1,10 @@
 import React, { useEffect, useState, useRef, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import authApi from "../api/authApi";
-import LoginPicture from "../assets/images/LoginPicture.jpg";
+import LoginPicture from "../assets/images/LoginPicture.webp";
 
 interface User {
   fullName: string;
-  role: string;
-  token: string;
   userId: string;
 }
 
@@ -39,34 +37,6 @@ export default function LoginPage() {
       return;
     }
 
-    if (
-      email.trim().toLowerCase() === "123@gmail.com" &&
-      password.trim() === "123@gmail.com"
-    ) {
-      const demoUser = {
-        fullName: "Demo User",
-        role: "user",
-        token: "fake-token-123",
-        userId: "demo123",
-      };
-
-      localStorage.setItem("userId", demoUser.userId);
-      localStorage.setItem("token", demoUser.token);
-      localStorage.setItem("user", JSON.stringify(demoUser));
-
-      if (remember) {
-        localStorage.setItem("rememberEmail", email);
-        localStorage.setItem("rememberPassword", password);
-      } else {
-        localStorage.removeItem("rememberEmail");
-        localStorage.removeItem("rememberPassword");
-      }
-
-      setUser(demoUser);
-      navigate("/");
-      return;
-    }
-
     // real API validation
     try {
       const data = await authApi.login({
@@ -74,25 +44,9 @@ export default function LoginPage() {
         password: password.trim(),
       });
       const res = data.data;
-      const newUser = { ...res, token: res.token };
 
-      localStorage.setItem("userId", res.userId);
-      localStorage.setItem("token", res.token);
-      localStorage.setItem("user", JSON.stringify(newUser));
-
-      if (remember) {
-        localStorage.setItem("rememberEmail", email);
-        localStorage.setItem("rememberPassword", password);
-      } else {
-        localStorage.removeItem("rememberEmail");
-        localStorage.removeItem("rememberPassword");
-      }
-
-      setUser(newUser);
-      const role = res.role?.toLowerCase();
-      if (role === "manager" || role === "staff") navigate("/manage");
-      else if (role === "seller") navigate("/seller");
-      else navigate("/");
+      setUser(res);
+      navigate("/homepage");
     } catch (err) {
       console.error("Login error:", err);
       setError("Thông tin đăng nhập không chính xác.");
