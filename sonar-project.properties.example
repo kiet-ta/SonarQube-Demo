@@ -1,8 +1,8 @@
-sonar.projectKey=e-wallet-demo
-sonar.projectName=E-Wallet-Demo
-sonar.projectVersion=1.0
-sonar.host.url=http://localhost:9000
-sonar.login=<YOUR_TOKEN>
+# This file you can show for everyone, because it just help them know what secret keys, help easy to fill in this project
+sonar.projectKey=
+sonar.projectName=
+sonar.host.url=
+sonar.login=
 
 # === FRONTEND (Vite + React) ===
 sonar.sources=frontend/src

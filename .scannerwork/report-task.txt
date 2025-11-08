@@ -1,0 +1,6 @@
+projectKey=SonarQube-Demo
+serverUrl=http://localhost:8678
+serverVersion=25.11.0.114957
+dashboardUrl=http://localhost:8678/dashboard?id=SonarQube-Demo
+ceTaskId=f009ef22-4e61-4e51-9411-24f52b112ac5
+ceTaskUrl=http://localhost:8678/api/ce/task?id=f009ef22-4e61-4e51-9411-24f52b112ac5
